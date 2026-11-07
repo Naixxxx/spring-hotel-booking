@@ -1,0 +1,32 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: catalog-service
+  datasource:
+    url: jdbc:h2:mem:catalog;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: false
+security:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-jwt-secret-please-change-1234567890}
+  internal:
+    key: ${SERVICE_SHARED_KEY:dev-only-service-key-12345678901234567890}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+logging:
+  pattern:
+    level: "%5p correlationId=%X{correlationId:-none} bookingId=%X{bookingId:-none}"

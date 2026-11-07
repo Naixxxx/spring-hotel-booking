@@ -1,0 +1,38 @@
+### 1. Логин USER (запрос в JetBrains HTTP Client или VS Code REST Client)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{"username":"traveler","password":"Traveler123!"}
+
+### 2. Логин ADMIN
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{"username":"operator","password":"Operator123!"}
+
+### Далее укажите токен, полученный выше:
+@token = REPLACE_WITH_BEARER_TOKEN
+
+### 3. Доступные комнаты
+GET http://localhost:8080/api/rooms/recommend?startDate=2027-04-12&endDate=2027-04-15
+Authorization: Bearer {{token}}
+
+### 4. Новая бронь (новый requestId на каждую новую бронь)
+POST http://localhost:8080/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+X-Correlation-Id: demo-booking-1
+
+{"requestId":"c9b7b2f4-4f1a-4249-9e19-8b203c242df4","autoSelect":true,"startDate":"2027-04-12","endDate":"2027-04-15"}
+
+### 5. Моя история
+GET http://localhost:8080/api/bookings?page=0&size=10
+Authorization: Bearer {{token}}
+
+### 6. Статистика гостиницы (ADMIN token)
+GET http://localhost:8080/api/hotels/1/statistics
+Authorization: Bearer {{token}}
+
+### 7. Отмена: подставьте UUID брони из ответа на шаге 4
+DELETE http://localhost:8080/api/bookings/REPLACE_WITH_BOOKING_ID
+Authorization: Bearer {{token}}

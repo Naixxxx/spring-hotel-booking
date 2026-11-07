@@ -1,0 +1,29 @@
+services:
+  registry:
+    build: {context: ., args: {MODULE: registry}}
+    ports: ["8761:8761"]
+    environment:
+      SPRING_APPLICATION_NAME: registry
+
+  catalog:
+    build: {context: ., args: {MODULE: catalog}}
+    ports: ["8082:8082"]
+    depends_on: [registry]
+    environment: &backend_env
+      EUREKA_URL: http://registry:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET:-dev-only-jwt-secret-please-change-1234567890}
+      SERVICE_SHARED_KEY: ${SERVICE_SHARED_KEY:-dev-only-service-key-12345678901234567890}
+
+  reservations:
+    build: {context: ., args: {MODULE: reservations}}
+    ports: ["8081:8081"]
+    depends_on: [registry, catalog]
+    environment: *backend_env
+
+  edge:
+    build: {context: ., args: {MODULE: edge}}
+    ports: ["8080:8080"]
+    depends_on: [registry, reservations, catalog]
+    environment:
+      EUREKA_URL: http://registry:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET:-dev-only-jwt-secret-please-change-1234567890}
